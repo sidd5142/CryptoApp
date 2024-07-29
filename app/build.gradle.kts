@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs")
+//    id("kotlin-parcelize")
+
 }
 
 android {
@@ -40,24 +43,24 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:+")
     implementation("com.google.android.material:material:+")
     implementation("androidx.constraintlayout:constraintlayout:+")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:+")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:+")
-    implementation("androidx.navigation:navigation-fragment-ktx:+")
-    implementation("androidx.navigation:navigation-ui-ktx:+")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:+")
     androidTestImplementation("androidx.test.espresso:espresso-core:+")
 //    implementation ("com.github.ybq:Android-SpinKit:1.4.0")
 //    implementation ("com.airbnb.android:lottie:5.2.0")
-    implementation ("com.google.code.gson:gson:2.8.9")
+    implementation ("com.google.code.gson:gson:2.11.0")
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
-
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+//    implementation ("org.jetbrains.kotlin:kotlin-parcelize-runtime:1.9.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 

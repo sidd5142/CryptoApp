@@ -1,42 +1,95 @@
 package com.example.crypto_xml.ui.dashboard
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.crypto_xml.adapter.MarketAdapter
+import com.example.crypto_xml.api.ApiInterface
+import com.example.crypto_xml.api.ApiUtilities
 import com.example.crypto_xml.databinding.FragmentDashboardBinding
+import com.example.crypto_xml.models.CryptoCurrency
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class DashboardFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    lateinit var binding: FragmentDashboardBinding
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
+    private lateinit var list: List<CryptoCurrency>
+    private lateinit var adapter: MarketAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        binding = FragmentDashboardBinding.inflate(layoutInflater)
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        list = listOf()
+
+        adapter = MarketAdapter(requireContext(), list, "market")
+        binding.currencyRecyclerView.adapter = adapter
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val res = ApiUtilities.getInstance().create(ApiInterface::class.java).getMarketData()
+
+            if (res.body() != null){
+
+                withContext(Dispatchers.Main){
+                    list = res.body()!!.data.cryptoCurrencyList
+
+                    adapter.updateData(list)
+                    binding.progressBar.visibility = GONE
+                }
+            }
         }
-        return root
+
+        searchCoin()
+
+        return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    lateinit var searchText : String
+    private fun searchCoin() {
+        binding.searchEditText.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+                searchText = p0.toString().toLowerCase()
+
+                updateRecyclerView()
+            }
+
+        })
+    }
+
+    private fun updateRecyclerView() {
+        val data = ArrayList<CryptoCurrency>()
+
+        for(item in list){
+            val coinName = item.name.lowercase(Locale.getDefault())
+            val coinSymbol = item.symbol.lowercase(Locale.getDefault())
+
+            if (coinName.contains(searchText) || coinSymbol.contains(searchText)){
+                data.add(item)
+            }
+
+            adapter.updateData(data)
+        }
     }
 }
