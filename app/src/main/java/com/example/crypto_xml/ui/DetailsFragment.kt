@@ -1,5 +1,7 @@
 package com.example.crypto_xml.ui
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,28 +13,60 @@ import com.example.crypto_xml.R
 import com.example.crypto_xml.databinding.FragmentDeatilsBinding
 import com.example.crypto_xml.models.CryptoCurrency
 import androidx.appcompat.widget.AppCompatButton
-
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class DetailsFragment : Fragment() {
 
     lateinit var binding: FragmentDeatilsBinding
-
-    private val args: DetailsFragmentArgs by navArgs()  // Corrected the declaration
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentDeatilsBinding.inflate(layoutInflater)
 
-        val data: CryptoCurrency = args.data!!  // Use 'args' instead of 'item'
+        val data: CryptoCurrency = args.data!!
 
         setUpDetails(data)
         loadChart(data)
         setButtonOnClick(data)
+        setupWatchlist(data)
 
         return binding.root
+    }
+
+    private fun setupWatchlist(data: CryptoCurrency) {
+        val sharedPreferences = requireContext().getSharedPreferences("watchlist", Context.MODE_PRIVATE)
+        val watchlistGson = Gson()
+        val json = sharedPreferences.getString("watchlist", ArrayList<String>().toString())
+        val type = object : TypeToken<ArrayList<String>>() {}.type
+        val watchlist: ArrayList<String> = watchlistGson.fromJson(json, type)
+
+        val isWatchlisted = watchlist.contains(data.symbol)
+        if (isWatchlisted) {
+            binding.addWatchlistButton.setImageResource(R.drawable.ic_star)
+        } else {
+            binding.addWatchlistButton.setImageResource(R.drawable.ic_star_outline)
+        }
+
+        binding.addWatchlistButton.setOnClickListener {
+            if (!isWatchlisted) {
+                // Add to watchlist
+                watchlist.add(data.symbol)
+                binding.addWatchlistButton.setImageResource(R.drawable.ic_star)
+            } else {
+                // Remove from watchlist
+                watchlist.remove(data.symbol)
+                binding.addWatchlistButton.setImageResource(R.drawable.ic_star_outline)
+            }
+
+            // Save updated watchlist
+            val editor = sharedPreferences.edit()
+            editor.putString("watchlist", watchlistGson.toJson(watchlist))
+            editor.apply()
+        }
     }
 
     private fun setButtonOnClick(data: CryptoCurrency) {
@@ -62,6 +96,7 @@ class DetailsFragment : Fragment() {
         oneWeek.setOnClickListener(clickListener)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun loadChartData(
         it: View?,
         s: String,
