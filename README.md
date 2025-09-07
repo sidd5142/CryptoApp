@@ -18,11 +18,14 @@ The app follows **MVVM architecture** and uses **Retrofit** for API calls, ensur
 | Home Screen | Search Feature |
 |-------------|----------------|
 | ![Home Screen](![Crypto1](https://github.com/user-attachments/assets/491ce6c4-678e-4ba4-8e8a-78eb87f9822b)
-) | ![Search Screen](images/search.png) |
+) | ![Search Screen](![search1](https://github.com/user-attachments/assets/26973a49-b02b-4f23-b524-5c0a89b29f61)
+) |
 
 | Coin Detail | WishList | Graph |
 |-------------|-----------------|-----------|
-| ![Detail Screen](images/detail.png) | ![Not Found](images/notfound.png) | ![Dark Mode](images/darkmode.png) |
+| ![Detail Screen](![Details](https://github.com/user-attachments/assets/0e6c4e51-e317-4014-88c0-ac3c7c3c5089)
+) | ![Not Found](images/notfound.png) | ![Graph](![Graph](https://github.com/user-attachments/assets/10159fc3-79a0-4757-93e0-fdee6e026881)
+) |
 
 ---
 
